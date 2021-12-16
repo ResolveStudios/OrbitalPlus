@@ -1,4 +1,3 @@
-#![Banner](https://i.imgur.com/3FhRK9t.jpg)
 
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/alta-sh/HallamBot)
 [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/alta-sh/HallamBot/blob/main/LICENSE)
@@ -8,7 +7,7 @@
 [![Made with <3 by alta](http://ForTheBadge.com/images/badges/built-with-love.svg)](https://github.com/alta-sh)
 
 
-# HallamBot
+# Orbital+
 
 HallamBot is a Discord bot made in .Net Core using the DSharp Discord API Wrapper. 
 The purpose of this bot is to provide University related help in a Computer Science student Discord server.
@@ -20,7 +19,7 @@ So far the bot will notify in a channel within the server approximately 30 minut
 
 This bot is still under development and more commands / functionality will be added in the near future...
 
-#### Prefixes: `@HallamCSHelp`, `!hb`, `!HallamBot`
+#### Prefixes: `@Orbital+`, `!o`, `!orbital`
 
 (Command prefixes are NOT case-sensitive, write it however you like.)
 
