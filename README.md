@@ -20,7 +20,7 @@ So far the bot will notify in a channel within the server approximately 30 minut
 
 This bot is still under development and more commands / functionality will be added in the near future...
 
-#### Prefixes: `@HallamCSHelp`, `!o `, `!OrbitalPlus `
+#### Prefixes: `@Orbital+`, `!o `, `!OrbitalPlus `
 
 (Command prefixes are NOT case-sensitive, write it however you like.)
 
