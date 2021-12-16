@@ -1,5 +1,3 @@
-![Banner](https://i.imgur.com/3FhRK9t.jpg)
-
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/alta-sh/HallamBot)
 [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/alta-sh/HallamBot/blob/main/LICENSE)
 
