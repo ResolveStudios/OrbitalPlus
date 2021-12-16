@@ -1,11 +1,11 @@
 <!--![Banner](https://i.imgur.com/3FhRK9t.jpg)-->
 
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/alta-sh/OrbitalPlus)
-[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/alta-sh/OrbitalPlus/blob/main/LICENSE)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/OkashiKami/OrbialPlus)
+[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/OkashiKami/OrbialPlus/blob/main/LICENSE)
 
-[Join the Hallam CS / Software Engineering Student Server](https://discord.com/invite/r4KsVBjp9W)
+[Join the Club Orbital / Orbital Club Server](https://discord.gg/yGYcaFnGjg)
 
-[![Made with <3 by alta](http://ForTheBadge.com/images/badges/built-with-love.svg)](https://github.com/alta-sh)
+[![Made with <3 by alta](http://ForTheBadge.com/images/badges/built-with-love.svg)](https://github.com/OkashiKami/OrbialPlus)
 
 
 # OrbitalPlus
