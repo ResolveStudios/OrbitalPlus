@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Orbital</RootNamespace>
+    <ApplicationIcon>C:\Users\zbigm\.nuget\packages\vrchat.api.client\1.1.1\contentFiles\any\netstandard2.0\vrc_cat.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DSharpPlus" Version="4.1.0" />
+    <PackageReference Include="DSharpPlus.CommandsNext" Version="4.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="VRChat.API.Client" Version="1.1.1" />
+  </ItemGroup>
+
+</Project>
