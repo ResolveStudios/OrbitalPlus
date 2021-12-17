@@ -12,57 +12,53 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using Orbital.Data;
 using System.Linq;
+using Orbital.Init;
 
 namespace Orbital.Events
 {
     public static class OnReady
     {
-        private static readonly DiscordClient ctx = Init.Bot.DiscordCtx;
+        private static readonly DiscordClient ctx = Init.Bot.ctx;
         public static readonly string READ_WRITE_PATH = @$"{Directory.GetDirectoryRoot(Directory.GetCurrentDirectory())}";
         public static Timetable Timetable;
         public static string AssignmentsDeadlineString = "";
-        public static List<Models.Assignment> AssDueList = new List<Models.Assignment>();
+        public static List<Assignment> AssDueList = new List<Models.Assignment>();
         public static Task OnTrigger(DiscordClient sender, DSharpPlus.EventArgs.ReadyEventArgs e)
         {
-            
-
-
             Timetable = new Timetable();
             Task.Run(async () => await LectureNotification(new CancellationToken()));
 
             DateTime postStartUpTime = DateTime.UtcNow;
 
             PrintInit();
-            Console.BackgroundColor = ConsoleColor.Blue;
-            Console.WriteLine($"\n [Startup time: {(postStartUpTime - Orbital.Program.preStartUpTime).TotalSeconds.ToString()} seconds] "); Console.BackgroundColor = ConsoleColor.Black;
-
-
+             Debug.Log($"[Startup time: {(postStartUpTime - Program.preStartUpTime).TotalSeconds.ToString()} seconds] ", ConsoleColor.Blue, false);
+            
             var status = new DiscordActivity("Orbital+ VRC Activity", ActivityType.Watching);
             ctx.UpdateStatusAsync(status);
             
 
-            Console.ForegroundColor = ConsoleColor.Blue; Console.WriteLine("\n--------------------- All Systems Online ---------------------"); Console.ForegroundColor = ConsoleColor.White;
+            Debug.Log("\n--------------------- All Systems Online ---------------------", ConsoleColor.Blue, false);
 
-            Console.WriteLine("Building Models...\n");
+             Debug.Log("Building Models...", header: false);
             BuildModels();
-            if (Data.TopicData.CsTopics != null)
+            if (TopicData.CsTopics != null)
             {
-                Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine(Data.TopicData.CsTopics.Subject.ToString() + " Data Model exists.");
+                Debug.Log(TopicData.CsTopics.Subject.ToString() + " Data Model exists.", ConsoleColor.Yellow, false);
             } else
             {
-                Console.ForegroundColor = ConsoleColor.Red; Console.WriteLine("COMPUTER SCIENCE Data Model does not exist.");
+                Debug.Log("COMPUTER SCIENCE Data Model does not exist.", ConsoleColor.Red, false);
             }
 
             if (Data.TopicData.SoftEngTopics != null)
             {
-                Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine(Data.TopicData.SoftEngTopics.Subject.ToString() + " Data Model exists.");
+                Debug.Log(TopicData.SoftEngTopics.Subject.ToString() + " Data Model exists.", header: false);
             } else
             {
-                Console.ForegroundColor = ConsoleColor.Red; Console.WriteLine("SOFTWARE ENGINEERING Data Model does not exist.");
+                Debug.Log("SOFTWARE ENGINEERING Data Model does not exist.", ConsoleColor.Red, false);
             }
 
-            Console.ForegroundColor = ConsoleColor.Green; Console.WriteLine("Models successfully built!"); Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("\n\nListening...\n");
+            Debug.Log("Models successfully built!", ConsoleColor.Green, false);
+            Debug.Log("Listening...\n", ConsoleColor.DarkCyan, false);
 
             foreach (var t in Data.TopicData.CsTopics.Topics)
             {
@@ -82,7 +78,7 @@ namespace Orbital.Events
             Data.TopicData.CsTopics = new TopicList(Subject.COMPUTER_SCIENCE);
             if (!File.Exists(READ_WRITE_PATH + @"CsTopicData.json"))
             {
-                Console.WriteLine("Json data does not exist... Generating the data now...");
+                 Debug.Log("Json data does not exist... Generating the data now...", header: false);
                 foreach(var topic in Data.TopicData.CsTopics.Topics)
                 {
                     topic.BuildAssignments();
@@ -92,23 +88,23 @@ namespace Orbital.Events
                 
                 foreach (var module in Data.TopicData.CsTopics.Topics)
                 {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"\n\t{module.Name}: ");
+                     Debug.Log($"\t{module.Name}: ", ConsoleColor.Green, false);
 
                     foreach (var assignment in module.Assignments)
                     {
                         Console.ForegroundColor = ConsoleColor.White;
-                        Console.WriteLine($"\t\t {assignment.AssignmentTitle} - {assignment.Percentage}% - [{assignment.Semester.ToString().ToUpper()} SEMESTER]\n" +
+                         Debug.Log($"\t\t {assignment.AssignmentTitle} - {assignment.Percentage}% - [{assignment.Semester.ToString().ToUpper()} SEMESTER]\n" +
                             $"\t\t Deadline: {assignment.Deadline.ToShortDateString()} | Feedback {assignment.FeedbackReturn.ToShortDateString()}\n");
                     }
                 }
 
-                Console.ForegroundColor = ConsoleColor.Green; Console.WriteLine("\n\nJson sample data successfully generated and saved.\n\n"); Console.ForegroundColor = ConsoleColor.White;
-            } else
+                Console.ForegroundColor = ConsoleColor.Green;  Debug.Log("\n\nJson sample data successfully generated and saved.\n\n"); Console.ForegroundColor = ConsoleColor.White;
+            } 
+            else
             {
-                Console.WriteLine("Json file found for data... importing now... ");
-                Data.TopicData.CsTopics = JsonConvert.DeserializeObject<TopicList>(File.ReadAllText(READ_WRITE_PATH + @"CsTopicData.json"));
-                Console.ForegroundColor = ConsoleColor.Green; Console.WriteLine("All data has successfully been imported!"); Console.ForegroundColor = ConsoleColor.White;
+                Debug.Log("Json file found for data... importing now... ", header: false);
+                TopicData.CsTopics = JsonConvert.DeserializeObject<TopicList>(File.ReadAllText(READ_WRITE_PATH + @"CsTopicData.json"));
+                Debug.Log("All data has successfully been imported!", ConsoleColor.Green, false);
             }
         }
 
@@ -171,7 +167,7 @@ namespace Orbital.Events
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("                     Made with <3 by OkashiKami"); Console.ForegroundColor = ConsoleColor.White; Console.Write(" | ");
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(@"https://github.com/OkashiKami/Orbial-"); Console.ForegroundColor = ConsoleColor.White;
+             Debug.Log(@"https://github.com/OkashiKami/Orbial-"); Console.ForegroundColor = ConsoleColor.White;
         }
     }
 }

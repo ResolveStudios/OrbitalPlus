@@ -24,9 +24,6 @@ namespace Orbital
 
         static async Task MainAsync()
         {
-            Resoruces.Load<Settings>();
-            Resoruces.Load<MemberManager>();
-
             VRC.Init();
             Bot.Init();
 

@@ -1,6 +1,7 @@
 ﻿using DSharpPlus;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Orbital.Init;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -48,6 +49,14 @@ namespace Orbital.Data
             enablementionprefix = true;
             dmhelp = false;
             enabledefaulthelp = false;
+        }
+
+        public void Save()
+        {
+            var json = JsonConvert.SerializeObject(this, Formatting.Indented);
+            File.WriteAllText(savefile, json);
+            if (File.Exists(savefile))
+                Debug.Log("Settings file has been saved successfully!");
         }
     }
 }

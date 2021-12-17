@@ -15,7 +15,7 @@ namespace Orbital
 
         internal static void Init()
         {
-            if (string.IsNullOrEmpty(Resoruces.Get<Settings>().vrc_username) || string.IsNullOrEmpty(Resoruces.Get<Settings>().vrc_password) || string.IsNullOrEmpty(Resoruces.Get<Settings>().vrc_apikey))
+            if (string.IsNullOrEmpty(Resources.Get<Settings>().vrc_username) || string.IsNullOrEmpty(Resources.Get<Settings>().vrc_password) || string.IsNullOrEmpty(Resources.Get<Settings>().vrc_apikey))
             {
                 Debug.Log($"Error({Errors.NoVRCInfo}) {Errors.GetReason(Errors.NoVRCInfo)}");
                 Errors.SetError();
@@ -23,10 +23,11 @@ namespace Orbital
             }
 
             _vrchat = new VRChatClientBuilder()
-              .WithCredentials(Resoruces.Get<Settings>().vrc_username, Resoruces.Get<Settings>().vrc_password)
-              .WithApiKey(Resoruces.Get<Settings>().vrc_apikey)
+              .WithCredentials(Resources.Get<Settings>().vrc_username, Resources.Get<Settings>().vrc_password)
+              .WithApiKey(Resources.Get<Settings>().vrc_apikey)
               .Build();
         }
+
 
         public static async Task StartAsync()
         {
@@ -45,11 +46,10 @@ namespace Orbital
                             break;
                     }
                 }
-
             }
         }
 
-        private static async Task<User> GetUserById(string userid)
+        public static async Task<User> GetUserByIdAsync(string userid)
         {
             try
             {
@@ -61,13 +61,31 @@ namespace Orbital
             }
             catch (ApiException e)
             {
-                Console.WriteLine($"Exception when calling API: {e.Message}");
-                Console.WriteLine($"Status Code: {e.ErrorCode}");
-                Console.WriteLine(e.ToString());
+                 Debug.Log($"Exception when calling API: {e.Message}");
+                 Debug.Log($"Status Code: {e.ErrorCode}");
+                 Debug.Log(e.ToString());
                 return default;
             }
         }
-        private static async Task<World> GetWorldById(string worldid)
+        public static async Task<User> GetUserByNameAsync(string username)
+        {
+            try
+            {
+                Debug.Log("Getting Other Player Info");
+                var OtherUser = await _vrchat.Users.GetUserByNameAsync(username);
+                if (OtherUser == null) return default;
+                Debug.Log($"Found user {OtherUser.DisplayName}, joined {OtherUser.DateJoined}");
+                return Task.FromResult(OtherUser).Result;
+            }
+            catch (ApiException e)
+            {
+                Debug.Log($"Exception when calling API: {e.Message}");
+                Debug.Log($"Status Code: {e.ErrorCode}");
+                 Debug.Log(e.ToString());
+                return default;
+            }
+        }
+        public static async Task<World> GetWorldByIdAsync(string worldid)
         {
             try
             {
@@ -79,9 +97,26 @@ namespace Orbital
             }
             catch (ApiException e)
             {
-                Console.WriteLine($"Exception when calling API: {e.Message}");
-                Console.WriteLine($"Status Code: {e.ErrorCode}");
-                Console.WriteLine(e.ToString());
+                 Debug.Log($"Exception when calling API: {e.Message}");
+                 Debug.Log($"Status Code: {e.ErrorCode}");
+                 Debug.Log(e.ToString());
+                return default;
+            }
+        }
+        public static async Task<User> SearchAsync(string displayname)
+        {
+            try
+            {
+                List<LimitedUser> users = await _vrchat.Users.SearchUsersAsync(displayname, n: 1);
+                if (users.Count <= 0) return default;
+                var user =  await GetUserByNameAsync(users[0].Username);
+                return Task.FromResult(user).Result;
+            }
+            catch (ApiException e)
+            {
+                Debug.Log($"Exception when calling API: {e.Message}");
+                Debug.Log($"Status Code: {e.ErrorCode}");
+                Debug.Log(e.ToString());
                 return default;
             }
         }

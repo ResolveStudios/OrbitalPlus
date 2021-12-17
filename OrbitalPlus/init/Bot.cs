@@ -10,50 +10,58 @@ using Orbital.Models;
 using VRChat.API.Api;
 using VRChat.API.Client;
 using Orbital.Data;
+using System.Linq;
 
 namespace Orbital.Init
 {
     public static class Bot
     {
-        public static DiscordClient DiscordCtx { get; private set; }
+        public static DiscordClient ctx { get; private set; }
         public static CommandsNextExtension Commands { get; private set; }
         
         public static void Init()
         {
-            Resoruces.Load<Settings>();
+            var settings = Resources.Get<Settings>();
 
-            if (string.IsNullOrEmpty(Resoruces.Get<Settings>().token))
+
+            if (string.IsNullOrEmpty(Resources.Get<Settings>().token))
             {
-                Debug.Log($"Error({Errors.NoToken}) {Errors.GetReason(Errors.NoToken)}");
+                Debug.Log($"Error({Errors.NoToken}) {Errors.GetReason(Errors.NoToken)}", ConsoleColor.Red);
                 Errors.SetError();
                 return;
             }
             var discord = new DiscordClient(new DiscordConfiguration()
             {
-                Token = Resoruces.Get<Settings>().token,
-                TokenType = Resoruces.Get<Settings>().tokentype,
-                MinimumLogLevel = Resoruces.Get<Settings>().minimumloglevel,
+                Token = Resources.Get<Settings>().token,
+                TokenType = Resources.Get<Settings>().tokentype,
+                MinimumLogLevel = Resources.Get<Settings>().minimumloglevel,
+                Intents = DiscordIntents.All,
             });
             var CommandsConfig = new CommandsNextConfiguration
             {
-                StringPrefixes = Resoruces.Get<Settings>().prefixes,
-                CaseSensitive = Resoruces.Get<Settings>().casesensitive,
-                EnableDms = Resoruces.Get<Settings>().enabledms,
-                EnableMentionPrefix = Resoruces.Get<Settings>().enablementionprefix,
-                DmHelp = Resoruces.Get<Settings>().dmhelp,
-                EnableDefaultHelp = Resoruces.Get<Settings>().enabledefaulthelp,
+                StringPrefixes = Resources.Get<Settings>().prefixes,
+                CaseSensitive = Resources.Get<Settings>().casesensitive,
+                EnableDms = Resources.Get<Settings>().enabledms,
+                EnableMentionPrefix = Resources.Get<Settings>().enablementionprefix,
+                DmHelp = Resources.Get<Settings>().dmhelp,
+                EnableDefaultHelp = Resources.Get<Settings>().enabledefaulthelp,
             };
 
             Commands = discord.UseCommandsNext(CommandsConfig);
             Commands.RegisterCommands<Commands.UtilityCommands>();
             Commands.RegisterCommands<Commands.VRChatCommands>();
-            DiscordCtx = discord;
-            DiscordCtx.Ready += Events.OnReady.OnTrigger;
+            Commands.RegisterCommands<Commands.ClubCommands>();
+            ctx = discord;
+            ctx.Ready += async (sender, e) =>
+            {                
+                await Events.OnReady.OnTrigger(sender, e);
+            };
+            ctx.GuildAvailable += async (sender, e) => await Utils.UpdateSettingsAsync(e.Guild);
         }
 
         internal static async Task StartAsync()
         {
-            await DiscordCtx.ConnectAsync();
+            await ctx.ConnectAsync();
             await Task.Delay(-1);
         }
     }
