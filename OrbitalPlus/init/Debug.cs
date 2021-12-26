@@ -6,6 +6,7 @@ namespace Orbital.Init
     {
         public static void Log(object value, ConsoleColor color = ConsoleColor.White, bool header = true)
         {
+#if DEBUG
             if (value == null) return;
             if(header)
             {
@@ -21,6 +22,7 @@ namespace Orbital.Init
             }
             Console.ForegroundColor = color;
             Console.WriteLine($"{value}");
+#endif
         }
     }
 }

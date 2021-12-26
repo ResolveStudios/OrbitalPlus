@@ -42,13 +42,20 @@ namespace Orbital
                 }
                 else
                 {
-                    var json = File.ReadAllText(GuildSettings.savefile(name));
-                    var value  = JsonConvert.DeserializeObject<T>(json);
-                    if (value != null)
-                        Debug.Log($"{typeof(T).Name} file has been loaded successfully!");
-                    else
-                        value = Activator.CreateInstance<T>();
-                    return (T)(object)value;
+                    try
+                    {
+                        var json = File.ReadAllText(GuildSettings.savefile(name));
+                        var value = JsonConvert.DeserializeObject<T>(json);
+                        if (value != null)
+                            Debug.Log($"{typeof(T).Name} file has been loaded successfully!");
+                        else
+                            value = Activator.CreateInstance<T>();
+                        return (T)(object)value;
+                    }
+                    catch(Exception ex)
+                    {
+                        Debug.Log(ex, ConsoleColor.Red);
+                    }
                 }
             }
             return default(T);

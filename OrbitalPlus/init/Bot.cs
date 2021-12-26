@@ -19,11 +19,9 @@ namespace Orbital.Init
         public static DiscordClient ctx { get; private set; }
         public static CommandsNextExtension Commands { get; private set; }
         
-        public static void Init()
+        public static async Task InitAsync()
         {
             var settings = Resources.Get<Settings>();
-
-
             if (string.IsNullOrEmpty(Resources.Get<Settings>().token))
             {
                 Debug.Log($"Error({Errors.NoToken}) {Errors.GetReason(Errors.NoToken)}", ConsoleColor.Red);
@@ -56,11 +54,16 @@ namespace Orbital.Init
             {                
                 await Events.OnReady.OnTrigger(sender, e);
             };
-            ctx.GuildAvailable += async (sender, e) => await Utils.UpdateSettingsAsync(e.Guild);
+            ctx.GuildAvailable += async (sender, e) =>
+            {
+                await Utils.UpdateSettingsAsync(e.Guild);
+            };
+            await Task.Delay(1);
         }
 
         internal static async Task StartAsync()
         {
+            Debug.Log("Starting Discord Client...");
             await ctx.ConnectAsync();
             await Task.Delay(-1);
         }

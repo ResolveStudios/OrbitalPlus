@@ -8,6 +8,7 @@ using Orbital.Init;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Orbital
@@ -15,24 +16,22 @@ namespace Orbital
     class Program
     {
         public static DateTime preStartUpTime;
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            preStartUpTime = DateTime.UtcNow;
-            MainAsync().GetAwaiter().GetResult();
-            Console.ReadKey();
-        }
-
-        static async Task MainAsync()
-        {
-            VRC.Init();
-            Bot.Init();
-
-            if(!Errors.has)
+            Task.Run(async () =>
             {
-                await VRC.StartAsync();
-                await Bot.StartAsync();
-            }
-            Console.ReadKey();
+                preStartUpTime = DateTime.UtcNow;
+
+                await VRC.InitAsync();
+                await Bot.InitAsync();
+
+                if (!Errors.has)
+                {
+                    Task.Run(async () => await VRC.StartAsync());
+                    Task.Run(async () => await Bot.StartAsync());
+                }
+            });
+            Console.ReadLine();
         }
     }
 }

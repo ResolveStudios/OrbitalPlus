@@ -71,6 +71,7 @@ namespace Orbital.Data
             if (File.Exists(_filepath))
                 Debug.Log($"{GetType().Name} File has been saved successfully!");
 
+            if (permissionFile == null) return;
             var obj = JsonConvert.DeserializeObject<TempRole>(File.ReadAllText(permissionFile));
             json = JsonConvert.SerializeObject(obj, Formatting.Indented);
             if (!string.IsNullOrEmpty(permissionFile))
