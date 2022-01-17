@@ -32,6 +32,7 @@ namespace Orbital.Data
         public bool enablementionprefix;
         public bool dmhelp;
         public bool enabledefaulthelp;
+        public bool ignoreExtraArguments;
 
         public string vrc_username;
         public string vrc_password;
@@ -56,7 +57,7 @@ namespace Orbital.Data
             var json = JsonConvert.SerializeObject(this, Formatting.Indented);
             File.WriteAllText(savefile, json);
             if (File.Exists(savefile))
-                Debug.Log("Settings file has been saved successfully!");
+                Debug.Log("Settings file has been saved successfully!", header: true);
         }
     }
 }

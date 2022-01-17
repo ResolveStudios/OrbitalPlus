@@ -1,17 +1,75 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Orbital</RootNamespace>
-    <ApplicationIcon>C:\Users\zbigm\.nuget\packages\vrchat.api.client\1.1.1\contentFiles\any\netstandard2.0\vrc_cat.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\OrbitalPlus.ico</ApplicationIcon>
+    <StartupObject />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>F:\source\repos\OrbialPlus\Bins\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DSharpPlus" Version="4.1.0" />
-    <PackageReference Include="DSharpPlus.CommandsNext" Version="4.1.0" />
+    <PackageReference Include="DSharpPlus" Version="4.2.0-nightly-01056" />
+    <PackageReference Include="DSharpPlus.CommandsNext" Version="4.2.0-nightly-01056" />
+    <PackageReference Include="DSharpPlus.SlashCommands" Version="4.2.0-nightly-01056" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="VRChat.API.Client" Version="1.1.1" />
+    <PackageReference Include="YoutubeDLSharp" Version="0.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="okprocessor">
+      <HintPath>..\..\..\..\Club-Orbital-Master\YoutubeDLTools\okprocessor.exe</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\ffmpeg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\ffplay.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\ffprobe.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\ImageProcessor.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\ImageProcessor.Plugins.WebP.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\okprocessor.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\StaffAppDesc.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\x64\libwebp.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\youtube-dl.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

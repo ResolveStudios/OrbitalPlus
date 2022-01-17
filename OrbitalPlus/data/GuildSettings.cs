@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Orbital.Init;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 
@@ -21,6 +22,8 @@ namespace Orbital.Data
         public string name;
         public ulong id;
         public string permissionFile;
+        public string playlistfile;
+        public ulong announcementsChannel;
         public List<Tuple<ulong, string, string>> member_list = new List<Tuple<ulong, string, string>>();
         public List<Role> roles = new List<Role>();
 
@@ -44,7 +47,7 @@ namespace Orbital.Data
                 member_list.Add(new Tuple<ulong, string, string>(discordid, discordname, vrchatname));
             else
             {
-                Debug.Log("Your already in our system your vrchat name will be updated");
+                Debug.Log("Your already in our system your vrchat name will be updated", header: true);
                 for (int i = 0; i < member_list.Count; i++)
                 {
                     if (member_list[i].Item2 == discordname)
@@ -66,16 +69,24 @@ namespace Orbital.Data
 
         internal void Save(string _filepath)
         {
-            var json = JsonConvert.SerializeObject(this, Formatting.Indented);
-            File.WriteAllText(_filepath, json);
-            if (File.Exists(_filepath))
-                Debug.Log($"{GetType().Name} File has been saved successfully!");
+            try
+            {
+                var json = JsonConvert.SerializeObject(this, Formatting.Indented);
+                File.WriteAllText(_filepath, json);
+                if (File.Exists(_filepath))
+                    Debug.Log($"{GetType().Name} File has been saved successfully!", header: true);
 
-            if (permissionFile == null) return;
-            var obj = JsonConvert.DeserializeObject<TempRole>(File.ReadAllText(permissionFile));
-            json = JsonConvert.SerializeObject(obj, Formatting.Indented);
-            if (!string.IsNullOrEmpty(permissionFile))
-                File.WriteAllText(permissionFile, json);
+                if (permissionFile == null || !File.Exists(permissionFile)) return;
+                var obj = JsonConvert.DeserializeObject<TempRole>(File.ReadAllText(permissionFile));
+                json = JsonConvert.SerializeObject(obj, Formatting.Indented);
+                if (!string.IsNullOrEmpty(permissionFile))
+                    File.WriteAllText(permissionFile, json);
+            } 
+            catch (Exception ex)
+            {
+                Debug.Log($"ERROR\n{ex}", Color.Red);
+            }
+                
         }
     }
 }

@@ -1,12 +1,20 @@
-﻿using DSharpPlus.Entities;
+﻿using DSharpPlus.CommandsNext;
+using DSharpPlus.Entities;
+using DSharpPlus.EventArgs;
+using DSharpPlus.SlashCommands;
 using Newtonsoft.Json;
 using Orbital.Data;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using YoutubeDLSharp;
+using YoutubeDLSharp.Metadata;
+using Debug = Orbital.Init.Debug;
 
 namespace Orbital
 {
@@ -51,7 +59,8 @@ namespace Orbital
                     if (!string.IsNullOrEmpty(json))
                     {
                         var obj = JsonConvert.DeserializeObject<TempRole>(json);
-                        gsettings.roles = obj.roles;
+                        if (obj == null) gsettings.roles = null;
+                        else  gsettings.roles = obj.roles;
                     }
                 }
                 catch { }
@@ -117,6 +126,57 @@ namespace Orbital
             return Task.CompletedTask;
         }
 
+        internal static async Task CheckClubMusicChannel(DiscordMessage data)
+        {
+            if (Uri.TryCreate(data.Content, UriKind.Absolute, out Uri result))
+            {
+                var _result = await RunSearchAsync(result.AbsoluteUri);
+                await data.RespondAsync($"Found {(_result != null ? _result.Title : string.Empty)}");
+            }
+            else
+            {
+                var _result = await RunSearchAsync(data.Content);
+                await data.RespondAsync($"Found {(_result != null ? _result.Title : string.Empty)}");
+            }
+
+            await data.RespondAsync($"Song was requested by {data.Author.Username}");
+        }
+
+        internal static async Task<VideoData> RunSearchAsync(string url)
+        {
+            var cts = new CancellationTokenSource();
+            Debug.Log(await GetYoutubeDL().RunUpdate());
+            var result = await GetYoutubeDL().RunVideoDataFetch(GetQuery(url), cts.Token, overrideOptions: new YoutubeDLSharp.Options.OptionSet()
+            {
+                NoPlaylist = true,
+                FlatPlaylist = true,
+            });
+            return result.Data;
+        }
+
+        private static YoutubeDL GetYoutubeDL()
+        {
+            var ytdl = new YoutubeDL();
+            // set the path of the youtube-dl and FFmpeg if they're not in PATH or current directory
+            ytdl.YoutubeDLPath = "Resources\\youtube-dl.exe";
+            ytdl.FFmpegPath = "Resources\\ffmpeg.exe";
+            // optional: set a different download folder
+            ytdl.OutputFolder = "cache\\downloads";
+            return ytdl;
+        }
+
+        private static string GetQuery(string url)
+        {
+            var query = string.Empty;
+
+            if (url.StartsWith("http://") || url.StartsWith("https://"))
+                query = url;
+            else
+                query = $"ytsearch50:\"{url}\"";
+
+            return query;
+        }
+
         internal static async Task<string> GetLocation(string value)
         {
             var split = value.Split('(', '~');
@@ -130,5 +190,33 @@ namespace Orbital
                 return $"**{_world.Name}** {_world.AuthorName}";
             return "In a Private World";
         }
+
+
+        public static ConsoleColor FromColor(Color c)
+        {
+            int index = (c.R > 128 | c.G > 128 | c.B > 128) ? 8 : 0; // Bright bit
+            index |= (c.R > 64) ? 4 : 0; // Red bit
+            index |= (c.G > 64) ? 2 : 0; // Green bit
+            index |= (c.B > 64) ? 1 : 0; // Blue bit
+            return (ConsoleColor)index;
+        }
+
+        public static bool hasRole(InteractionContext ctx, DiscordMember member, DiscordRole role)
+        {
+            var memberRoles = member.Roles.ToList();
+            return memberRoles.Find(x => x.Id == role.Id) != null;
+        }
+        public static bool hasRole(CommandContext ctx, DiscordMember member, DiscordRole role)
+        {
+            var memberRoles = member.Roles.ToList();
+            return memberRoles.Find(x => x.Id == role.Id) != null;
+        }
+
+        public static bool IsDiscordRole(DiscordRole role)
+        {
+            if (role.Name == "@everyone") return true;
+            if (role.Color.Value == DiscordColor.Black.Value) return true;
+            return false;
+        }
     }
-}
+} 

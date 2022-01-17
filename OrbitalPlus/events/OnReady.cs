@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Orbital.Data;
 using System.Linq;
 using Orbital.Init;
+using System.Drawing;
 
 namespace Orbital.Events
 {
@@ -31,34 +32,34 @@ namespace Orbital.Events
             DateTime postStartUpTime = DateTime.UtcNow;
 
             PrintInit();
-             Debug.Log($"[Startup time: {(postStartUpTime - Program.preStartUpTime).TotalSeconds.ToString()} seconds] ", ConsoleColor.Blue, false);
+             Debug.Log($"[Startup time: {(postStartUpTime - ConsoleProgram.preStartUpTime).TotalSeconds.ToString()} seconds] ", Color.Blue, false);
             
             var status = new DiscordActivity("Orbital+ VRC Activity", ActivityType.Watching);
             ctx.UpdateStatusAsync(status);
             
 
-            Debug.Log("\n--------------------- All Systems Online ---------------------", ConsoleColor.Blue, false);
+            Debug.Log("\n--------------------- All Systems Online ---------------------", Color.Blue, false);
 
-             Debug.Log("Building Models...", header: false);
+             Debug.Log("Building Models...", Color.White, false);
             BuildModels();
             if (TopicData.CsTopics != null)
             {
-                Debug.Log(TopicData.CsTopics.Subject.ToString() + " Data Model exists.", ConsoleColor.Yellow, false);
+                Debug.Log(TopicData.CsTopics.Subject.ToString() + " Data Model exists.", Color.Yellow, false);
             } else
             {
-                Debug.Log("COMPUTER SCIENCE Data Model does not exist.", ConsoleColor.Red, false);
+                Debug.Log("COMPUTER SCIENCE Data Model does not exist.", Color.Red, false);
             }
 
             if (Data.TopicData.SoftEngTopics != null)
             {
-                Debug.Log(TopicData.SoftEngTopics.Subject.ToString() + " Data Model exists.", header: false);
+                Debug.Log(TopicData.SoftEngTopics.Subject.ToString() + " Data Model exists.", Color.White, false);
             } else
             {
-                Debug.Log("SOFTWARE ENGINEERING Data Model does not exist.", ConsoleColor.Red, false);
+                Debug.Log("SOFTWARE ENGINEERING Data Model does not exist.", Color.Red, false);
             }
 
-            Debug.Log("Models successfully built!", ConsoleColor.Green, false);
-            Debug.Log("Listening...\n", ConsoleColor.DarkCyan, false);
+            Debug.Log("Models successfully built!", Color.Green, false);
+            Debug.Log("Listening...\n", Color.DarkCyan, false);
 
             foreach (var t in Data.TopicData.CsTopics.Topics)
             {
@@ -78,7 +79,7 @@ namespace Orbital.Events
             Data.TopicData.CsTopics = new TopicList(Subject.COMPUTER_SCIENCE);
             if (!File.Exists(READ_WRITE_PATH + @"CsTopicData.json"))
             {
-                 Debug.Log("Json data does not exist... Generating the data now...", header: false);
+                 Debug.Log("Json data does not exist... Generating the data now...", Color.White, false);
                 foreach(var topic in Data.TopicData.CsTopics.Topics)
                 {
                     topic.BuildAssignments();
@@ -88,23 +89,22 @@ namespace Orbital.Events
                 
                 foreach (var module in Data.TopicData.CsTopics.Topics)
                 {
-                     Debug.Log($"\t{module.Name}: ", ConsoleColor.Green, false);
+                     Debug.Log($"\t{module.Name}: ", Color.Green, false);
 
                     foreach (var assignment in module.Assignments)
                     {
-                        Console.ForegroundColor = ConsoleColor.White;
                          Debug.Log($"\t\t {assignment.AssignmentTitle} - {assignment.Percentage}% - [{assignment.Semester.ToString().ToUpper()} SEMESTER]\n" +
-                            $"\t\t Deadline: {assignment.Deadline.ToShortDateString()} | Feedback {assignment.FeedbackReturn.ToShortDateString()}\n");
+                            $"\t\t Deadline: {assignment.Deadline.ToShortDateString()} | Feedback {assignment.FeedbackReturn.ToShortDateString()}\n", Color.White);
                     }
                 }
 
-                Console.ForegroundColor = ConsoleColor.Green;  Debug.Log("\n\nJson sample data successfully generated and saved.\n\n"); Console.ForegroundColor = ConsoleColor.White;
+                Debug.Log("\n\nJson sample data successfully generated and saved.\n\n", Color.Green); 
             } 
             else
             {
-                Debug.Log("Json file found for data... importing now... ", header: false);
+                Debug.Log("Json file found for data... importing now... ", Color.White, false);
                 TopicData.CsTopics = JsonConvert.DeserializeObject<TopicList>(File.ReadAllText(READ_WRITE_PATH + @"CsTopicData.json"));
-                Debug.Log("All data has successfully been imported!", ConsoleColor.Green, false);
+                Debug.Log("All data has successfully been imported!", Color.Green, false);
             }
         }
 
@@ -161,13 +161,8 @@ namespace Orbital.Events
                                  | |__| | |  | |_) | | || (_| | | |_|  
                                   \____/|_|  |_.__/|_|\__\__,_|_|      
 ";
-
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.Write(onLoadGreeting);
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("                     Made with <3 by OkashiKami"); Console.ForegroundColor = ConsoleColor.White; Console.Write(" | ");
-            Console.ForegroundColor = ConsoleColor.Yellow;
-             Debug.Log(@"https://github.com/OkashiKami/Orbial-"); Console.ForegroundColor = ConsoleColor.White;
+            Debug.Log(onLoadGreeting, Color.Magenta);
+            Debug.Log("                     Made with <3 by OkashiKami | https://github.com/OkashiKami/Orbial-", Color.Yellow);
         }
     }
 }

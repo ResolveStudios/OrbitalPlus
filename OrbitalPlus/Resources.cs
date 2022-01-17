@@ -3,6 +3,7 @@ using Orbital.Data;
 using Orbital.Init;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 
 namespace Orbital
@@ -12,12 +13,12 @@ namespace Orbital
                 
         public static T Get<T>(string name = default)
         {
-            Debug.Log($"Loading {(string.IsNullOrEmpty(name) ? string.Empty : $"{name} ")}{typeof(T).Name}...");
+            Debug.Log($"Loading {(string.IsNullOrEmpty(name) ? string.Empty : $"{name} ")}{typeof(T).Name}...", header: true);
             if (typeof(T).Equals(typeof(Settings)))
             {
                 if (!File.Exists(Settings.savefile))
                 {
-                    Debug.Log($"{typeof(T).Name} file has not been setup, creating it now...");
+                    Debug.Log($"{typeof(T).Name} file has not been setup, creating it now...", header: true);
                     var value = new Settings();
                     return (T)(object)value;
                 }
@@ -26,7 +27,7 @@ namespace Orbital
                     var json = File.ReadAllText(Settings.savefile);
                     var value = JsonConvert.DeserializeObject<Settings>(json);
                     if (value != null)
-                        Debug.Log($"{typeof(T).Name} file has been loaded successfully!");
+                        Debug.Log($"{typeof(T).Name} file has been loaded successfully!", header: true);
                     else
                         value = new Settings();
                     return (T)(object)value;
@@ -36,7 +37,7 @@ namespace Orbital
             {
                 if (!File.Exists(GuildSettings.savefile(name)))
                 {
-                    Debug.Log($"{typeof(T).Name} file has not been setup, creating it now...");
+                    Debug.Log($"{typeof(T).Name} file has not been setup, creating it now...", header: true);
                     var value = new GuildSettings();
                     return (T)(object)value;
                 }
@@ -47,14 +48,14 @@ namespace Orbital
                         var json = File.ReadAllText(GuildSettings.savefile(name));
                         var value = JsonConvert.DeserializeObject<T>(json);
                         if (value != null)
-                            Debug.Log($"{typeof(T).Name} file has been loaded successfully!");
+                            Debug.Log($"{typeof(T).Name} file has been loaded successfully!", header: true);
                         else
                             value = Activator.CreateInstance<T>();
                         return (T)(object)value;
                     }
                     catch(Exception ex)
                     {
-                        Debug.Log(ex, ConsoleColor.Red);
+                        Debug.Log(ex, Color.Red);
                     }
                 }
             }

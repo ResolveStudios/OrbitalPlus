@@ -1,14 +1,31 @@
 ﻿using System;
+using System.Drawing;
+using System.Text;
 
 namespace Orbital.Init
 {
     public static class Debug
     {
-        public static void Log(object value, ConsoleColor color = ConsoleColor.White, bool header = true)
+        public delegate void OnLogOutput(object output, Color color = default, bool newline = false);
+        public static event OnLogOutput onLogOutput;
+
+        public static void Log(object value, Color color = default, bool header = true)
         {
-#if DEBUG
             if (value == null) return;
-            if(header)
+            if (header)
+            {
+                var time = DateTime.Now.ToString("[hh:mm:ss]");
+                var date = DateTime.Now.ToString("[MM/dd/yy]");
+
+                onLogOutput?.Invoke("[", Color.White);
+                onLogOutput?.Invoke("Orbital+", Color.Cyan);
+                onLogOutput?.Invoke("]", Color.White);
+                onLogOutput?.Invoke($"{date}{time} ", Color.White);
+            }
+            onLogOutput?.Invoke($"{value}", color == default ? Color.White : color, true);
+
+#if DEBUG
+            if (header)
             {
                 var time = DateTime.Now.ToString("[hh:mm:ss]");
                 var date = DateTime.Now.ToString("[MM/dd/yy]");
@@ -20,9 +37,12 @@ namespace Orbital.Init
                 Console.Write("]");
                 Console.Write($"{date}{time} ");
             }
-            Console.ForegroundColor = color;
+            Console.ForegroundColor = Utils.FromColor(color == default ? Color.White : color);
             Console.WriteLine($"{value}");
 #endif
         }
+        
+            
+
     }
 }

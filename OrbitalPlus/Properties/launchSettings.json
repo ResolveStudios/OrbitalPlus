@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Orbital+": {
+      "commandName": "Project",
+      "remoteDebugEnabled": false
+    }
+  }
+}

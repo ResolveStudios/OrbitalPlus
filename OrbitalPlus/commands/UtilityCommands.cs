@@ -1,6 +1,9 @@
 ﻿using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.Entities;
+using DSharpPlus.SlashCommands;
+using DSharpPlus.SlashCommands.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,6 +85,34 @@ namespace Orbital.Commands
         public async Task Deadlines(CommandContext ctx)
         {
             await ctx.Channel.SendMessageAsync(Events.OnReady.AssignmentsDeadlineString);
+        }
+    }
+    
+    [SlashCommandGroup("utilities", "Utiliteies Command Module")]
+    public class SlashUtilityCommands : ApplicationCommandModule
+    {
+        [SlashCommand("ping", "Will test the response time of a request to the bot.")]
+        public async Task Ping(InteractionContext ctx)
+        {
+            DateTime before = DateTime.UtcNow;
+            await ctx.Channel.SendMessageAsync("Pong :ping_pong:");
+            DateTime after = DateTime.UtcNow;
+            await ctx.Channel.SendMessageAsync(((after - before).Milliseconds / 10).ToString() + "ms response time. :chart_with_upwards_trend:");
+        }
+
+        [SlashCommand("help", "default help")]
+        public async Task Help(InteractionContext ctx)
+        {
+            await ctx.Channel.SendMessageAsync("You can find all the commands on alta's github reposoitory: https://github.com/OkashiKami/Orbial-");
+        }
+
+        [SlashCommand("copy-role", "Copy the specified role")]
+        [SlashRequireOwner]
+        public async Task CopyRole(InteractionContext ctx, [Option("DiscordRole", "The role that you would like to copy")] DiscordRole role)
+        {
+            var _role = ctx.Guild.GetRole(role.Id);
+            await ctx.Guild.CreateRoleAsync($"{_role.Name} Copy", _role.Permissions, _role.Color, _role.IsHoisted, _role.IsMentionable);
+            await ctx.CreateResponseAsync("Role has been duplicated");
         }
     }
 }

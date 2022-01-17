@@ -1,9 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
-using Orbital.Init;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace Orbital.Data
 {
@@ -31,7 +29,7 @@ namespace Orbital.Data
                 priority = r.Position,
                 isRoot = r.CheckPermission(Permissions.Administrator) == PermissionLevel.Allowed,
                 permName = r.Name.Replace("/", "_"),
-                permColor = Utils.HexConverter(r.Color),                
+                permColor = Utils.HexConverter(r.Color),
             };
         }
     }
