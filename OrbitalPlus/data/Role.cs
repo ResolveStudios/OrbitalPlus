@@ -10,7 +10,7 @@ namespace Orbital.Data
     {
         public int priority;
         public bool isRoot;
-        public int permID;
+        public ulong permID;
         public string permName;
         public string permColor;
         public string permIcon;
@@ -23,9 +23,10 @@ namespace Orbital.Data
 
         public static implicit operator Role(DiscordRole r)
         {
+            if (r == null) return default;
             return new Role()
             {
-                permID = (int)r.Id,
+                permID = r.Id,
                 priority = r.Position,
                 isRoot = r.CheckPermission(Permissions.Administrator) == PermissionLevel.Allowed,
                 permName = r.Name.Replace("/", "_"),

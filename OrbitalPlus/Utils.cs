@@ -1,4 +1,5 @@
-﻿using DSharpPlus.CommandsNext;
+﻿using DSharpPlus;
+using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.SlashCommands;
@@ -20,6 +21,8 @@ namespace Orbital
 {
     internal class Utils
     {
+        internal static DiscordChannel staffAppCat;
+
         internal static string GetDomain(string item)
         {
             if (item.ToLower().Contains("discord.gg")) return "Discord";
@@ -53,6 +56,14 @@ namespace Orbital
                 if (gsettings.member_list == null)
                     gsettings.member_list = new List<Tuple<ulong, string, string>>();
 
+                // Create or Update member list 
+                foreach (var member in guild.Members)
+                {
+                    if (!member.Value.IsBot)
+                        gsettings.AutoRegisterUser(member.Value.Id, member.Value.Username);
+                    else
+                        gsettings.AutoUnregisterUser(member.Value.Username);
+                }
                 try
                 {
                     var json = File.ReadAllText(gsettings.permissionFile);
@@ -63,16 +74,30 @@ namespace Orbital
                         else  gsettings.roles = obj.roles;
                     }
                 }
-                catch { }
+                catch (Exception ex) { }
 
 
-                if (File.Exists(gsettings.permissionFile))
+                if (!string.IsNullOrEmpty(gsettings.permissionFile))
                 {
-                    // Setup all the roles
-                    foreach (var role in guild.Roles)
+                    gsettings.roles =  gsettings.roles.OrderByDescending(x => x.priority).ToList();
+
+                    // Clean Up Role
+                    foreach (var role in gsettings.roles)
                     {
-                        var _role = (Role)role.Value;
+                        var _role = guild.GetRole(role.permID);
+                        if(_role == null)
+                            gsettings.roles.RemoveAt(gsettings.roles.IndexOf(_role));
+                    }
+
+                    // Setup all the roles
+                    foreach (var role in guild.Roles.Select(v => v.Value).ToList().OrderByDescending(x => x.Position).ToList())
+                    {
+                        var _role = (Role)role;
                         if (gsettings.roles == null) gsettings.roles = new List<Role>();
+                        foreach (var _role_ in gsettings.roles)
+                            if (guild.GetRole(_role_.permID) == null) 
+                                gsettings.roles.RemoveAt(gsettings.roles.IndexOf(_role_));
+
                         if (gsettings.roles.Find(x => x.permID == _role.permID) == null)
                             gsettings.roles.Add(_role);
                         else
@@ -97,9 +122,31 @@ namespace Orbital
                                 }
                             }
                         }
-                    }
 
-                    gsettings.roles.OrderByDescending(x => x.priority);
+                    }
+                    gsettings.roles = gsettings.roles.OrderByDescending(x => x.priority).ToList();
+
+                    // Remove member if they don't have the role
+                    for (int i = 0; i < gsettings.roles.Count; i++)
+                    {
+                        var role = gsettings.roles[i];
+                        foreach (var member in guild.Members)
+                        {
+                            var mrols = member.Value.Roles.ToList();
+                            var hasRole = mrols.Find(x => x.Id == role.permID) != null;
+
+                            if(!hasRole)
+                            {
+                                var gmember = gsettings.member_list.Find(x => x.Item1 == member.Key);
+                                if (gmember != null)
+                                {
+                                    var index = gsettings.roles[i].members.IndexOf($"{gmember.Item2}|{gmember.Item3}");
+                                    if(index > -1) 
+                                        gsettings.roles[i].members.RemoveAt(index);
+                                }
+                            }                                                
+                        }
+                    }
 
                     // Add all memebers to role if they have the permission
                     foreach (var member in guild.Members)
@@ -109,7 +156,7 @@ namespace Orbital
                         var memberrolse = _member.Roles.ToList();
                         foreach (var _role in memberrolse)
                         {
-                            var perms = gsettings.roles.Find(x => x.permID == (int)_role.Id);
+                            var perms = gsettings.roles.Find(x => x.permID == _role.Id);
                             var contains = mli == null ? false : perms.members.ToList().Find(x => x.Contains(mli.Item2)) != null;
                             if (perms != null && mli != null && !contains)
                                 perms.members.Add($"{_member.Username}|{mli.Item3}");
@@ -124,6 +171,39 @@ namespace Orbital
                 gsettings.Save(GuildSettings.savefile(guild.Name));
             }
             return Task.CompletedTask;
+        }
+
+        internal static async Task<DiscordOverwriteBuilder>  MakeOverwrite(DiscordRole role, Permissions Allowed = default, Permissions Denied = default, DiscordOverwrite fromAsync = default)
+        {
+            var overwrite = new DiscordOverwriteBuilder(role);
+            if (fromAsync != null)
+                await overwrite.FromAsync(fromAsync);
+            overwrite.Allowed = Allowed;
+            overwrite.Denied = Denied;
+            return await Task.FromResult(overwrite);
+        }
+        internal static async Task<DiscordOverwriteBuilder> MakeOverwrite(DiscordMember member, Permissions Allowed = default, Permissions Denied = default, DiscordOverwrite fromAsync = default)
+        {
+            var overwrite = new DiscordOverwriteBuilder(member);
+            if (fromAsync != null)
+                await overwrite.FromAsync(fromAsync);
+            overwrite.Allowed = Allowed;
+            overwrite.Denied = Denied;
+            return await Task.FromResult(overwrite);
+        }
+
+        internal static bool IsOrbitalStaff(InteractionContext ctx, DiscordMember member)
+        {
+
+            var roles = ctx.Guild.Roles.Where(x => x.Value.Name.StartsWith("..") || (x.Value.Position >= 22 && x.Value.Position <= ctx.Guild.Roles.Count - 1)).Select(x => x.Key).ToList();
+            foreach (var role in ctx.Member.Roles)
+            {
+                if (roles.Contains(role.Id))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         internal static async Task CheckClubMusicChannel(DiscordMessage data)

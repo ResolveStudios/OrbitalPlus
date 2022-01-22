@@ -5,17 +5,17 @@
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Orbital</RootNamespace>
     <ApplicationIcon>Resources\OrbitalPlus.ico</ApplicationIcon>
-    <StartupObject />
+    <StartupObject></StartupObject>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>F:\source\repos\OrbialPlus\Bins\</OutputPath>
+    <OutputPath>F:\source\repos\orbial-plus-master\Bins\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DSharpPlus" Version="4.2.0-nightly-01056" />
-    <PackageReference Include="DSharpPlus.CommandsNext" Version="4.2.0-nightly-01056" />
-    <PackageReference Include="DSharpPlus.SlashCommands" Version="4.2.0-nightly-01056" />
+    <PackageReference Include="DSharpPlus" Version="4.2.0-nightly-01060" />
+    <PackageReference Include="DSharpPlus.CommandsNext" Version="4.2.0-nightly-01060" />
+    <PackageReference Include="DSharpPlus.SlashCommands" Version="4.2.0-nightly-01060" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="VRChat.API.Client" Version="1.1.1" />
     <PackageReference Include="YoutubeDLSharp" Version="0.4.0" />
@@ -62,6 +62,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\StaffAppDesc.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\StaffAppQuestionnaire.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\x64\libwebp.dll">

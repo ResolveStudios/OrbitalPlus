@@ -22,6 +22,7 @@ namespace Orbital
 
         public static void Main(params string[] args)
         {
+            Console.Title = "Orbital+";
             state = StateEnum.Running;
             Task.Run(async () =>
             {

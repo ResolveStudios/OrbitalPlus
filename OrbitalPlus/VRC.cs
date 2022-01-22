@@ -109,7 +109,7 @@ namespace Orbital
 
                 // Invite User
                 var curUser = await _vrchat.Authentication.GetCurrentUserAsync();
-                var inviteRequest = new InviteRequest($"{worldid}:{instanceID}~private({curUser.Id})~canRequestInvite~region(use)~nonce({Guid.NewGuid()})");
+                var inviteRequest = new InviteRequest($"{worldid}:{instanceID}~hidden({curUser.Id})~region(use)~nonce({Guid.NewGuid()})");
                 Notification result = await _vrchat.Invites.InviteUserAsync(user.Id, inviteRequest);
                 Debug.Log(result, header: true);
             }

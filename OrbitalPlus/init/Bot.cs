@@ -60,6 +60,7 @@ namespace Orbital.Init
             slash.RegisterCommands<SlashUtilityCommands>(866821480515108904);
             slash.RegisterCommands<SlashVRChatCommands>(866821480515108904);
             slash.RegisterCommands<SlashClubCommands>(866821480515108904);
+            slash.RegisterCommands<SlashClubCommandsExtra>(866821480515108904);
 
             ctx = discord;
             ctx.Ready += async (sender, e) =>
@@ -87,7 +88,6 @@ namespace Orbital.Init
             var timer = new Timer(async (e) => await AutoAssignRole(guild, role), null, TimeSpan.Zero, TimeSpan.FromSeconds(30));
             while (ConsoleProgram.state == ConsoleProgram.StateEnum.Running)
             {
-
             }
             await Task.Delay(1);
            
@@ -100,7 +100,8 @@ namespace Orbital.Init
                 var members = await guild.GetAllMembersAsync();
                 foreach (var m in members)
                 {
-                    if (m.JoinedAt.Minute >= 3)
+                    var duration = DateTime.Now - m.JoinedAt;
+                    if (duration.TotalMinutes >= 3)
                     {
                         var roles = m.Roles.ToList();
                         var _role = roles.Find(x => x.Id == role.Id);
